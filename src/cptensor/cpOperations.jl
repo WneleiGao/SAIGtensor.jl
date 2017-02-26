@@ -65,6 +65,7 @@ julia> X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);
 """
 function cpnorm(X::cptensor)
     coef = X.lambda * X.lambda'
+    N = X.N
     for m = 1 : N
         coef = coef .* (X.A[m]'*X.A[m])
     end
@@ -72,6 +73,7 @@ function cpnorm(X::cptensor)
 end
 function cpnorm(lambda::Array{Float64,1}, A::Array{Array{Float64,2},1})
     coef = lambda * lambda'
+    N = length(A)
     for m = 1 : N
         coef = coef .* (A[m]'*A[m])
     end
@@ -86,6 +88,7 @@ function innerprod(X::cptensor, Y::tensor)
            throw(DimensionMismatch("X.I[m] != Y.I[m]"))
         end
     end
+    I = X.I
     tmp = 0.
     for r = 1 : X.R
         T = reshape(Y.D, prod(I[1:N-1]), I[N]) * X.A[N][:,r]
@@ -202,6 +205,7 @@ function cptRight(X::tensor, A::Array{Array{Float64,2}}, n::Int64)
     N  = X.N
     n < N ? nothing : error("n must less than N")
     B = A[n+1:N]
+    I = X.I
     tmp = recursiveKRP(B)
     szr = prod(I[1:n])
     szc = prod(I[n+1:N])
@@ -248,6 +252,8 @@ compute X × A[1] × A[2] × ... × A[n-1]
 function cptLeft(X::tensor, A::Array{Array{Float64,2}}, n::Int64)
     N = X.N
     n > 1 ? nothing : error("n must be larger than 1")
+    I = X.I
+    R = size(A[1],2)
     B = A[1:n-1]
     tmp = recursiveKRP(B)
     szr = prod(I[1:n-1])
@@ -295,7 +301,7 @@ when dir="R", it compute X × A[-n] from X × A[1]...A[n-1]
 # Returns
 * `G` : Array{Float64,2} with size I[n] × R
 """
-function cp_gradient(Z::Array{Float64,2}, A::Array{Array{Float64,2}}, I::Array{Int64}, n::Int64; dir="L")
+function cp_gradient(Z::Array{Float64,2}, A::Array{Array{Float64,2}}, I::Array{Int64,1}, n::Int64; dir="L")
     R = size(Z, 2)
     N = length(A)
     G = zeros(I[n], R)
@@ -392,7 +398,7 @@ function cpals(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-6, pflag=
            break
         end
     end
-    normalize!(lambda, A)
+    cpnormalize!(lambda, A)
     return lambda, A
 end
 
@@ -410,7 +416,8 @@ efficiet way computing tensor times all factor matrix except nth factor
 * `G` : Array{Float64,2} with size I[n] × R
 """
 function ttf(X::tensor, A::Array{Array{Float64,2}}, n::Int64)
-    ns = cptfirst(X.I)
+    I = X.I
+    ns = cptfirst(I)
     if n <= ns
        Rn = cptRight(X, A, n);
        G  = cp_gradient(Rn, A, I, n, dir="L")
@@ -438,6 +445,7 @@ the usage of this method is deprecated.
 function ttf_slow(X::tensor, A::Array{Array{Float64,2},1}, n)
     R = size(A[1],2)
     N = X.N;
+    I = X.I;
     G = zeros(X.I[n], R)
     if n == 1
        G = reshape(X.D, X.I[1], prod(X.I[2:end]))
@@ -467,7 +475,7 @@ function ttf_slow(X::tensor, A::Array{Array{Float64,2},1}, n)
 end
 
 """
-    normalize!(lambda, A)
+    cpnormalize!(lambda, A)
 
 normalize factor matrix for CP decomposition and add weight to lambda
 
@@ -475,7 +483,7 @@ normalize factor matrix for CP decomposition and add weight to lambda
 * `lambda`: Array{Float64,1}, non-sorted weight
 * `A`: Array{Array{Float64,2}}, Array of factor matrix
 """
-function normalize!(lambda::Array{Float64,1}, A::Array{Array{Float64,2},1})
+function cpnormalize!(lambda::Array{Float64,1}, A::Array{Array{Float64,2},1})
     R = length(lambda)
     N = length(A)
     for r = 1 : R
@@ -503,22 +511,34 @@ end
 
 convert 4D cptensor to tensor
 """
-function cp2tensor(X::cptensor, )
+function cp2tensor(X::cptensor)
     N = X.N
     I = X.I
     R = X.R
     lambda = X.lambda
     T = zeros(I...)
-    for r = 1 : R
-        for i4 = 1 : I[4]
-            for i3 = 1 : I[3]
-                for i2 = 1 : I[2]
-                    for i1 = 1 : I[1]
-                        T[i1,i2,i3,i4] = T[i1,i2,i3,i4] + lambda[r]*X.A[4][i4,r]*X.A[3][i3,r]*X.A[2][i2,r]*X.A[1][i1,r]
-                    end
-                end
-            end
-        end
+    if N == 4
+       for r = 1 : R
+           for i4 = 1 : I[4]
+               for i3 = 1 : I[3]
+                   for i2 = 1 : I[2]
+                       for i1 = 1 : I[1]
+                           T[i1,i2,i3,i4] = T[i1,i2,i3,i4] + lambda[r]*X.A[4][i4,r]*X.A[3][i3,r]*X.A[2][i2,r]*X.A[1][i1,r]
+                       end
+                   end
+               end
+           end
+       end
+    elseif N == 3
+       for r = 1 : R
+           for i3 = 1 : I[3]
+               for i2 = 1 : I[2]
+                   for i1 = 1 : I[1]
+                       T[i1,i2,i3] = T[i1,i2,i3] + lambda[r]*X.A[3][i3,r]*X.A[2][i2,r]*X.A[1][i1,r]
+                   end
+               end
+           end
+       end
     end
     return tensor(N, I, T)
 end

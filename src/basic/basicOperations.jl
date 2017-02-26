@@ -244,7 +244,7 @@ function ttv(X::tensor, v::Array{Array{Float64,1}}, dims::Array{Int64})
         X.I[dims[i]] == length(v[i]) || throw(DimensionMismatch())
     end
     n = X.N
-    remdims = setdiff(collect(1:N), dims)
+    remdims = setdiff(collect(1:n), dims)
     pdims = vcat(remdims, dims)
     newI  = X.I[pdims]
     des = zeros(newI...)

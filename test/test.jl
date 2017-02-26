@@ -49,7 +49,7 @@ vecnorm(r-r1)
 # test recursive Khatri-Rao product for matrix
 I = [21, 32, 43, 24]; R = 3;
 N = length(I);
-A = Array{Array{Float64}}(N)
+A = Array{Array{Float64,2}}(N)
 for m = 1 : N
     A[m] = rand(I[m], R)
 end
@@ -66,7 +66,7 @@ vecnorm(r-r1)
 # test recursive Khatri-Rao product for vector
 I = [21, 32, 43, 24];
 N = length(I);
-A = Array{Array{Float64}}(N)
+A = Array{Array{Float64,1}}(N)
 for m = 1 : N
     A[m] = rand(I[m])
 end
@@ -83,7 +83,7 @@ vecnorm(r-r1)
 I = [77,34,89,67];
 a1 = rand(I[1]); a2 = rand(I[2]);
 a3 = rand(I[3]); a4 = rand(I[4]);
-A = Array{Array{Float64}}(length(I)-1)
+A = Array{Array{Float64,1}}(length(I)-1)
 A[1] = a1; A[2] = a3; A[3] = a4;
 X = rand(I...); X = tensor(length(I), I, X);
 X2 = matricization(X,2);
@@ -92,7 +92,7 @@ t = recursiveKRP(A); r = X2 * t;
 p = [1,2,4,3]; Inew = I[p];
 Xp = permutedims(X.D, (1,2,4,3)); Xp = tensor(length(Inew), Inew, Xp);
 Xp2 = matricization(Xp,2);
-B = Array{Array{Float64}}(length(I)-1)
+B = Array{Array{Float64,1}}(length(I)-1)
 B[1] = a1; B[2] = a4; B[3] = a3;
 tp = recursiveKRP(B)
 rp = Xp2 * tp;
@@ -253,13 +253,13 @@ Y1 = tensor(N, I, Y);
 @time ipt = innerprod(X, Y1);
 Xfull = cp2tensor(X)
 l = cpnorm(X); fit = sqrt(l^2 + sum(Y.^2) - 2*ipt);
-fit1 = sqrt(sum((Xfull-Y).^2))
+fit1 = sqrt(sum((Xfull.D-Y).^2))
 fit-fit1
 
 
 # ========test compute the right multiplication=================================
 N = 5; I = [21,32,43,44,45]; R = 7;
-ns = cptorder(I);
+ns = cptfirst(I);
 X = tensor(N, I, rand(I...));
 A = Array{Array{Float64,2}}(R);
 for m = 1 : N
@@ -289,11 +289,6 @@ function test_speed(X::tensor, A::Array{Array{Float64,2}}, n::Int64)
     end
     return Rnn
 end
-@time Rnn = cptRight(X, A, ns);
-@time Rnn1 = test_speed(X, A, ns);
-ns = 3
-@time Lnn = cptLeft(X, A, ns);
-@time Lnn1 = test_speed_left(X, A, ns);
 function test_speed_left(X::tensor, A::Array{Array{Float64,2}}, n::Int64)
     Jn = prod(X.I[1:n-1])
     Kn = prod(X.I[n:end])
@@ -302,6 +297,12 @@ function test_speed_left(X::tensor, A::Array{Array{Float64,2}}, n::Int64)
     Lnn = Xn'*tmp
     return Lnn
 end
+
+@time Rnn = cptRight(X, A, ns);
+@time Rnn1 = test_speed(X, A, ns);
+ns = 3
+@time Lnn = cptLeft(X, A, ns);
+@time Lnn1 = test_speed_left(X, A, ns);
 
 # =====cp_gradient=====================
 N = 5; I = [21,32,43,44,45]; R = 15;
@@ -403,7 +404,7 @@ vecnorm(Xst[n]-X1')
 vecnorm(Z1-Zs)
 
 # =======testing random cpals===================
-N = 4; I = [61,62,63,64]; R = 60;
+N = 4; I = [22,22,22,22]; R = 20;
 ns = ceil(Int64, 10*R*log(R))
 lambda = randn(R)
 A = Array{Array{Float64,2}}(N);
@@ -412,7 +413,6 @@ for m = 1 : N
     A[m] = rand(I[m],R)
     Xst[m] = zeros(ns,I[m])
 end
-# P = cptensor(N, I, R, lambda, A);
-# X = cp2tensor(P);
-X = tensor(N, I, rand(I...)
-(lambda1, A1) = randCpAls(X, R, pflag=true)
+P = cptensor(N, I, R, lambda, A);
+X = cp2tensor(P);
+@time (lambda1, A1) = randCpAls(X, R);

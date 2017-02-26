@@ -150,6 +150,6 @@ function randCpAls(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pf
            break
         end
     end
-    normalize!(lambda, A)
+    cpnormalize!(lambda, A)
     return lambda, A
 end
