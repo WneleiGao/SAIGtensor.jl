@@ -12,6 +12,7 @@
 # X = initCptensor(N, I, R, lambda, A);
 
 # matricization and unmatricization
+using SAIGtensor
 N = 3; I = [111, 121, 321]; D = reshape(collect(1:prod(I)), I...)
 X = initTensor(N, I, D)
 tmp = 0.
