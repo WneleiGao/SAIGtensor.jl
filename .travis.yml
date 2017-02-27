@@ -1,0 +1,11 @@
+language: julia
+julia:
+  - 0.5
+script:
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia -e 'Pkg.init(); Pkg.clone(pwd())'
+  - julia -e 'Pkg.test("SAIGtensor"; coverage=true)'
+
+after_success:
+  - julia -e 'Pkg.add("Documenter")'
+  - julia -e 'cd(Pkg.dir("SAIGtensor")); include(joinpath("docs", "make.jl"))'
