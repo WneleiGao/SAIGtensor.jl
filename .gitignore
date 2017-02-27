@@ -1,6 +1,7 @@
 # documentation #
 ###################
-docs
+docs/build/
+docs/site/
 
 # Temporary files #
 ###################
