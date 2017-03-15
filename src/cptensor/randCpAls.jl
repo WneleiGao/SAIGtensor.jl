@@ -73,6 +73,21 @@ function formXst!(Xst::Array{Float64,2}, D::Array{Float64,4}, idx::Array{Array{I
     end
     return nothing
 end
+function formXst!(Xst::Array{Float64,2}, D::Array{Float64,3}, idx::Array{Array{Int64,1},1}, dim::Array{Int64,1}, n::Int64)
+    (l1,l2) = size(Xst)
+    N = ndims(D)
+    ind = zeros(Int64,N)
+    for i1 = 1 : l1
+        for i = 1 : N-1
+            ind[dim[i]] = idx[i][i1]
+        end
+        for i2 = 1 : l2
+            ind[n] = i2
+            Xst[i1, i2] = D[ind[1],ind[2],ind[3]]
+        end
+    end
+    return nothing
+end
 
 """
   random sampling Z[n]
@@ -148,6 +163,36 @@ function randCpAls(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pf
         end
         if flag == 0
            break
+        end
+    end
+    cpnormalize!(lambda, A)
+    return lambda, A
+end
+
+
+function randCpAls_simplify(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pflag=false)
+    N = X.N; I = X.I;
+    # minimum(X.I) > R || error("too large rank")
+    normX = tnorm(X)
+    fit = 0.
+    # initialize factor matrix
+    lambda = zeros(R)
+    A = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        A[m] = randn(I[m], R)
+    end
+    ns = ceil(Int64, 10*R*log(R))
+    Zs = zeros(ns, R)
+    Xst = Array{Array{Float64,2}}(N)
+    for i = 1 : N
+        Xst[i] = zeros(ns, I[i])
+    end
+    for iter = 1 : maxiter
+        fitold = fit
+        # updating ns factor
+        for n = 1 : N
+            randSpl!(Zs, Xst, A, X, ns, n)
+            updateAn!(lambda, A, Zs, Xst[n], n)
         end
     end
     cpnormalize!(lambda, A)

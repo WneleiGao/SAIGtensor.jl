@@ -406,15 +406,21 @@ end
 # vecnorm(Z1-Zs)
 #
 # # =======testing random cpals===================
-# N = 4; I = [22,22,22,22]; R = 20;
-# ns = ceil(Int64, 10*R*log(R))
-# lambda = randn(R)
-# A = Array{Array{Float64,2}}(N);
-# Xst = Array{Array{Float64,2}}(N);
-# for m = 1 : N
-#     A[m] = rand(I[m],R)
-#     Xst[m] = zeros(ns,I[m])
-# end
-# P = cptensor(N, I, R, lambda, A);
-# X = cp2tensor(P);
-# @time (lambda1, A1) = randCpAls(X, R);
+N = 4; I = [61,62,63,64]; R = 20;
+ns = ceil(Int64, 10*R*log(R));
+lambda = randn(R);
+A = Array{Array{Float64,2}}(N);
+Xst = Array{Array{Float64,2}}(N);
+for m = 1 : N
+    A[m] = rand(I[m],R)
+    Xst[m] = zeros(ns,I[m])
+end
+P = cptensor(N, I, R, lambda, A);
+X = cp2tensor(P);
+@time (lambda1, A1) = randCpAls(X, R, pflag=true);
+@time (lambda2, A2) = cpals(X, R, pflag=true);
+@time (lambda3, A3) = randCpAls_simplify(X, R);
+
+normX = tnorm(X)
+normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
+fit = 1 - normresidual/normX

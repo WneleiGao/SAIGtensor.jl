@@ -1,0 +1,14 @@
+# - DenseTensor:
+#   - Title 1: denseTensor/page1.md
+# - CPTensor:
+#   - Title 1: CPTensor/page1.md
+
+```@contents
+Pages = ["CPTensor/page1.md"]
+Depth = 2
+```
+
+```@contents
+Pages = ["denseTensor/page1.md"]
+Depth = 2
+```
