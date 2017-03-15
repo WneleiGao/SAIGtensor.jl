@@ -16,9 +16,10 @@ export cptensor,
        sidx2sub,
        randSpl!,
        formXst!,
-       formZs,
+       formZs!,
        updateAn!,
-       randCpAls
+       randCpAls,
+       randCpAls_simplify
 
 include("cpOperations.jl")
 include("randCpAls.jl")

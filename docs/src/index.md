@@ -1,15 +1,13 @@
 # SAIGtensor Documentation
 
-```@contents
-```
+Tensor tools for seismic data processing
 
-## Functions
+## Dense Tensor
 
-```@autodocs
-Modules = [SAIGtensor]
-Order   = [:type, :function]
-```
-- link to [SAIGtensor Documentation](@ref)
-- link to [`matricization`](@ref)
+
+## CP Tensor
+
 
 ## Index
+```@index
+```
