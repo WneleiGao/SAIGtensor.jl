@@ -172,9 +172,10 @@ function WrapRandCpAls(par::Tuple{String, Int64})
     dp = convert(Array{Float32,1}, vec(X.D))
     fid = open(path, "r+"); pos = sizeof(Int32)*9;
     seek(fid, pos); write(fid, dp); close(fid)
+    return nothing
 end
 
-funtion WrapTaper(par::Tuple{String, Int64, Int64, Int64})
+function WrapTaper(par::Tuple{String, Int64, Int64, Int64})
     dir = par[1]
     it_wo = par[2]
     x1_wo = par[3]
