@@ -424,3 +424,55 @@ X = cp2tensor(P);
 normX = tnorm(X)
 normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
 fit = 1 - normresidual/normX
+
+
+# =========measure efficiency========================
+N = 3; I = [500,300,300]; R = 10;
+ns = ceil(Int64, 10*R*log(R));
+lambda = randn(R);
+A = Array{Array{Float64,2}}(N);
+Xst = Array{Array{Float64,2}}(N);
+for m = 1 : N
+    A[m] = rand(I[m],R)
+    Xst[m] = zeros(ns,I[m])
+end
+P = cptensor(N, I, R, lambda, A);
+X = cp2tensor(P);
+noise = rand(I...);
+r = vecnorm(noise)/(vecnorm(X.D *0.05)
+noise = noise / r;
+X.D = X.D + noise;
+his = randCpAls_fit(X, R)
+his = vcat(0.94, his);
+t   = randCpAls_time(X, R)
+t = cumsum(t)
+t = vcat(0., t)
+his1 = cpals_fit(X, R)
+his1 = vcat(0.93, his1);
+t1 = cpals_time(X, R)
+t1 = cumsum(t1)
+t1 = hcat(0., t1)
+fig = figure(figsize=(6,6))
+plot(t, his, linewidth=2, marker=".", "k", markersize=8)
+plot(t1, his1, linewidth=2, marker="*", "k", markersize=8)
+xlabel("Time (s)")
+ylabel("relative error")
+
+
+
+
+# ===========for 4D tensor=============
+N = 4; I = [100,60,60,60,]; R = 10;
+ns = ceil(Int64, 10*R*log(R));
+lambda = randn(R);
+A = Array{Array{Float64,2}}(N);
+Xst = Array{Array{Float64,2}}(N);
+for m = 1 : N
+    A[m] = rand(I[m],R)
+    Xst[m] = zeros(ns,I[m])
+end
+P = cptensor(N, I, R, lambda, A);
+X = cp2tensor(P);
+@time (lambda1, A1) = randCpAls(X, R, pflag=true);
+@time (lambda2, A2) = cpals(X, R, pflag=true);
+@time (lambda3, A3) = randCpAls_simplify(X, R);

@@ -96,4 +96,24 @@ dp = X.D;
 SeisPlot(ds[:,:,27], cmap="gray", style="wiggles", wiggle_trace_increment=3)
 
 tmp = hcat(ds[:,1:10:end,27],zeros(500,1), dp[:,1:10:end,25], zeros(500,1), dp[:,1:10:end,27]-ds[:,1:10:end,27]);
-SeisPlot(tmp, style="wiggles", wbox=6, hbox=3, dy=0.004, ylabel="Time (s)")
+SeisPlot(tmp, style="wiggles", wbox=6, hbox=4, dy=0.004, ylabel="Time (s)", xlabel="Trace number")
+
+# ========for curve events=================
+(d, e) = SeisParabEvents(nx2=100);
+snr = 1.;
+ds = SeisAddNoise(d, snr, L=5);
+N = 3;
+I = collect(size(ds));
+X = tensor(N, I, ds);
+R = 100;
+(lambda2, A2) = cpals(X, R, pflag=true);
+X = cptensor(N, I, R, lambda2, A2);
+X = cp2tensor(X)
+dp = X.D;
+tmp = hcat(ds[:,1:10:end,27],zeros(500,1), dp[:,1:10:end,25], zeros(500,1), dp[:,1:10:end,27]-ds[:,1:10:end,27]);
+SeisPlot(tmp, style="wiggles", wbox=6, hbox=4, dy=0.004, ylabel="Time (s)", xlabel="Trace number")
+ax = gca()
+ax[:xaxis][:tick_top]()
+ax[:xaxis][:set_label_position]("top")
+tight_layout()
+savefig("/Users/wenlei/Desktop/fig2.pdf")
