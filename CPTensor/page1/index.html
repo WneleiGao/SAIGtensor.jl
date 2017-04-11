@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Wenlei Gao">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>CP Tensor - SAIGtensor.jl</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link href="../../assets/Documenter.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "CP Tensor";
+    var mkdocs_page_input_path = "CPTensor/page1.md";
+    var mkdocs_page_url = "/CPTensor/page1/";
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> SAIGtensor.jl</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Introduction</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../denseTensor/page1/">DenseTensor</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">CP Tensor</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#cp-tensor">CP Tensor</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#functions">Functions</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">SAIGtensor.jl</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>CP Tensor</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/WneleiGao/SAIGtensor.jl/edit/master/docs/CPTensor/page1.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p><a id='CP-Tensor-1'></a></p>
+<h1 id="cp-tensor">CP Tensor</h1>
+<p>Some operations with respect to CP decomposition</p>
+<p><a id='Functions-1'></a></p>
+<h2 id="functions">Functions</h2>
+<p><a id='SAIGtensor.initCptensor' href='#SAIGtensor.initCptensor'>#</a>
+<strong><code>SAIGtensor.initCptensor</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>initCptensor(N, I, R, lambda, A)</code></pre>
+
+
+<p>create a cptensor object, right to test, it is a great work. fantastic packages.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>N</code>: Int64, dimensions</li>
+<li><code>I</code>: Array{Int64}, size of each dimension</li>
+<li><code>R</code>: Int64, rank of tensor</li>
+<li><code>lambda</code>: eigenvalue of tensor</li>
+<li><code>A</code>: Array{Array{Float64,2}}, basis</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>X</code>: CP tensor</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre class="codehilite"><code class="language-julia">julia&gt; N = 5; I = [23, 42, 13, 14, 17];
+julia&gt; R = 10; lambda = rand(N);
+julia&gt; A = Array{Array{Float64,2}}(N)
+julia&gt; for m = 1 : N
+julia&gt;     A[m] = rand(I[m], R)
+julia&gt; end
+julia&gt; X = initCptensor(N, I, R, lambda, A);</code></pre>
+
+
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L9-L34' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.cpnorm' href='#SAIGtensor.cpnorm'>#</a>
+<strong><code>SAIGtensor.cpnorm</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>l = cpnorm(X)</code></pre>
+
+
+<p>efficient way of computing the Frobenius norm of cp tensor</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>X</code>: cptensor</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>l</code>: the frobenius norm of X</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre class="codehilite"><code class="language-julia">julia&gt; I = [21, 32, 43, 24]; R = 3;
+julia&gt; N = length(I);
+julia&gt; A = Array{Array{Float64}}(N)
+julia&gt; for m = 1 : N
+julia&gt;     A[m] = rand(I[m], R)
+julia&gt; end
+julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
+
+
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L44-L65' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.fitness' href='#SAIGtensor.fitness'>#</a>
+<strong><code>SAIGtensor.fitness</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>f = fitness(X, Y)</code></pre>
+
+
+<p>compute the relative fitness of lowrank cptensor to a full tensor</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>X</code>: cptensor</li>
+<li><code>Y</code>: tensor</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>f</code>: relative fitness</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L120-L131' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.cptfirst' href='#SAIGtensor.cptfirst'>#</a>
+<strong><code>SAIGtensor.cptfirst</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>cptfirst(I)</code></pre>
+
+
+<p>decide which factor should be update first, the updating order is ns, ns-1:-1:1, ns+1, ns+2:N</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>I</code>  : Array{Int64,1}, dimensions of tensor</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L171-L179' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.cptRight' href='#SAIGtensor.cptRight'>#</a>
+<strong><code>SAIGtensor.cptRight</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>cptRight(X, A, n)</code></pre>
+
+
+<p>compute X × A[n+1] × A[n+2] × ... × A[N]</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>X</code>: tensor</li>
+<li><code>A</code>: Array{Array{Float64,2}}, Array of factor matrix</li>
+<li><code>n</code>: Int64</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>Rn</code> : Array{Float64,2}</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L191-L203' class='documenter-source'>source</a><br></p>
+<p>When applied matrix, using the efficient way to compute them based on the property X × A[n+1] × A[n+2] × ... × A[N] = (X × A[n+2] × ... × A[N]) × A[n+1]</p>
+<ul>
+<li><code>Rnp1</code>: Array{Float64,2} with size prod(I[1:n+1]) * R</li>
+<li><code>Anp1</code>: Array{Array{Float64,2}} with size I[n+1] * R</li>
+<li><code>I</code>   : Array{Int64}</li>
+<li><code>n</code>   : Int64</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L217-L223' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.cptLeft' href='#SAIGtensor.cptLeft'>#</a>
+<strong><code>SAIGtensor.cptLeft</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>cptLeft(X, A, n)</code></pre>
+
+
+<p>compute X × A[1] × A[2] × ... × A[n-1]</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>X</code>  : tensor</li>
+<li><code>A</code>: Array{Array{Float64,2}}, Array of factor matrix</li>
+<li><code>n</code>  : Int64</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>Ln</code> : Array{Float64,2}</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L239-L251' class='documenter-source'>source</a><br></p>
+<p>efficient way to compute Ln based on the property X × A[1] ... ×A[n-1] × A[n] = (X × A[1] ... ×A[n-1]) × A[n]</p>
+<ul>
+<li><code>Lnm1</code>: Array{Float64,2} with size prod(I[1:n+1]) * R</li>
+<li><code>Anm1</code>: Array{Array{Float64,2}} with size I[n+1] * R</li>
+<li><code>I</code>   : Array{Int64}</li>
+<li><code>n</code>   : Int64</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L267-L273' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.cp_gradient' href='#SAIGtensor.cp_gradient'>#</a>
+<strong><code>SAIGtensor.cp_gradient</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>cp_gradient(Z, A, I, n)</code></pre>
+
+
+<p>when dir="L", it compute X × A[-n] from X × A[n+1]...A[N] when dir="R", it compute X × A[-n] from X × A[1]...A[n-1]</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>Z</code>: Array{Float64,2}</li>
+<li><code>A</code>: Array{Array{Float64,2}}, Array of factor matrix</li>
+<li><code>I</code>: Array{Int64,1}, dimension of tensor</li>
+<li><code>n</code>: Int64.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>G</code> : Array{Float64,2} with size I[n] × R</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L289-L303' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.ttf' href='#SAIGtensor.ttf'>#</a>
+<strong><code>SAIGtensor.ttf</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>ttf(X, A, n)</code></pre>
+
+
+<p>efficiet way computing tensor times all factor matrix except nth factor</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>X</code>: tensor</li>
+<li><code>A</code>: Array{Array{Float64,2}}, Array of factor matrix</li>
+<li><code>n</code>: Int64, nth factor</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>G</code> : Array{Float64,2} with size I[n] × R</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L445-L457' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.ttf_slow' href='#SAIGtensor.ttf_slow'>#</a>
+<strong><code>SAIGtensor.ttf_slow</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>ttf_slow(X, A, n)</code></pre>
+
+
+<p>tensor times all factor matrix except nth factor the usage of this method is deprecated.</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>X</code>: tensor</li>
+<li><code>A</code>: Array{Array{Float64,2}}, Array of factor matrix</li>
+<li><code>n</code>: Int64, nth factor</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>G</code> : Array{Float64,2} with size I[n] × R</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L471-L484' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.cpnormalize!' href='#SAIGtensor.cpnormalize!'>#</a>
+<strong><code>SAIGtensor.cpnormalize!</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>cpnormalize!(lambda, A)</code></pre>
+
+
+<p>normalize factor matrix for CP decomposition and add weight to lambda</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>lambda</code>: Array{Float64,1}, non-sorted weight</li>
+<li><code>A</code>: Array{Array{Float64,2}}, Array of factor matrix</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L517-L525' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.cp2tensor' href='#SAIGtensor.cp2tensor'>#</a>
+<strong><code>SAIGtensor.cp2tensor</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>cp2tensor(X)</code></pre>
+
+
+<p>convert 4D cptensor to tensor</p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L549-L553' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.sidx2sub' href='#SAIGtensor.sidx2sub'>#</a>
+<strong><code>SAIGtensor.sidx2sub</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>sidx2sub!(I, s)</code></pre>
+
+
+<p>convert linear indices to sub-index</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>I</code>: Array{Int64,1}, dimensions</li>
+<li><code>s</code>: Array{Int64,1}, linear index</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>sidx</code>: Array{Tuple,1} with length(I)</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L1-L13' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.randSpl!' href='#SAIGtensor.randSpl!'>#</a>
+<strong><code>SAIGtensor.randSpl!</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>randSpl!(Zs, Xs, A, T, ns, n)</code></pre>
+
+
+<p>random sampling certain rows from Z[n]</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>Zs</code>: Array{Float64,2}, sampled Z[n]</li>
+<li><code>Xst</code>: Array{Array{Float64,2},1}, transpose of sampled X[n]</li>
+<li><code>A</code>: Array{Array{Float64,2},1}, factor matrix</li>
+<li><code>ns</code>: Int64, number of samples</li>
+<li><code>n</code>: Int64, specify which dimension</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L28-L39' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.formXst!' href='#SAIGtensor.formXst!'>#</a>
+<strong><code>SAIGtensor.formXst!</code></strong> &mdash; <em>Function</em>.</p>
+<p>random sampling X[n]^T</p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L58-L60' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.formZs!' href='#SAIGtensor.formZs!'>#</a>
+<strong><code>SAIGtensor.formZs!</code></strong> &mdash; <em>Function</em>.</p>
+<p>random sampling Z[n]</p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L92-L94' class='documenter-source'>source</a><br></p>
+<p><a id='SAIGtensor.updateAn!' href='#SAIGtensor.updateAn!'>#</a>
+<strong><code>SAIGtensor.updateAn!</code></strong> &mdash; <em>Function</em>.</p>
+<pre class="codehilite"><code>updateAn!(A, AtA, Gn, n)</code></pre>
+
+
+<p>update the nth entries in A and AtA</p>
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>A</code>  : Array{Array{Float64,2}}, Array of factor matrix</li>
+<li><code>AtA</code>: Array{Array{Float64,2}}, Array of A[n]'×A[n]</li>
+<li><code>Gn</code> : Array{Float64,2}, Xn×(⊗A[k]) for all k!=n</li>
+<li><code>n</code>  : Int64, nth factor</li>
+</ul>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L140-L150' class='documenter-source'>source</a><br></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../../denseTensor/page1/" class="btn btn-neutral" title="DenseTensor"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/WneleiGao/SAIGtensor.jl" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../../denseTensor/page1/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+      <script src="../../assets/mathjaxhelper.js"></script>
+
+</body>
+</html>
