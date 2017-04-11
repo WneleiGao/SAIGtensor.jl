@@ -1,4 +1,6 @@
 # form a new tensor
+using SAIGtensor
+
 N = 5; I = [23, 42, 13, 14, 17]; D = rand(I...)
 X = initTensor(N, I, D)
 
