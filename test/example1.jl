@@ -1,4 +1,4 @@
-form a new tensor
+# form a new tensor
 N = 5; I = [23, 42, 13, 14, 17]; D = rand(I...)
 X = initTensor(N, I, D)
 
