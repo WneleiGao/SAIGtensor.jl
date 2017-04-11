@@ -7,7 +7,7 @@ end
 """
     InitTensor(N, I, D)
 
-create a tensor object
+create a tensor object, here is some inline math: \$\\sqrt[n]{1+x+x^2+\\ldots}\$
 
 # Arguments
 * `N`: Int64, dimensions
