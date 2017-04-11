@@ -57,9 +57,11 @@
     
         <ul>
         
-            <li><a class="toctree-l3" href="#dense-tensor">Dense Tensor</a></li>
+            <li><a class="toctree-l3" href="#test-for-latex">Test for latex</a></li>
         
-            <li><a class="toctree-l3" href="#cp-tensor">CP Tensor</a></li>
+            <li><a class="toctree-l3" href="#include-code-to-documentation">Include code to documentation</a></li>
+        
+            <li><a class="toctree-l3" href="#include-figure">Include figure</a></li>
         
             <li><a class="toctree-l3" href="#index">Index</a></li>
         
@@ -117,10 +119,33 @@
                 <p><a id='SAIGtensor-Documentation-1'></a></p>
 <h1 id="saigtensor-documentation">SAIGtensor Documentation</h1>
 <p>Tensor tools for seismic data processing</p>
-<p><a id='Dense-Tensor-1'></a></p>
-<h2 id="dense-tensor">Dense Tensor</h2>
-<p><a id='CP-Tensor-1'></a></p>
-<h2 id="cp-tensor">CP Tensor</h2>
+<p><a id='Test-for-latex-1'></a></p>
+<h2 id="test-for-latex">Test for latex</h2>
+<p>inline math $\frac{\partial^2 u}{\partial t^2}-\Delta^2 u = 0$</p>
+<p>Here is an equation:</p>
+<p>
+<script type="math/tex; mode=display">
+\frac{n!}{k!(n-k)!} = \binom{n}{k}
+</script>
+</p>
+<p><a id='Include-code-to-documentation-1'></a></p>
+<h2 id="include-code-to-documentation">Include code to documentation</h2>
+<pre class="codehilite"><code class="language-julia">a = 1
+b = 2
+c = a+b</code></pre>
+
+
+<pre class="codehilite"><code>3</code></pre>
+
+
+<p><a id='Include-figure-1'></a></p>
+<h2 id="include-figure">Include figure</h2>
+<pre class="codehilite"><code class="language-julia">using PyPlot
+a = rand(100)
+plot(a)</code></pre>
+
+
+<p><img alt="" src="./plot.svg" /></p>
 <p><a id='Index-1'></a></p>
 <h2 id="index">Index</h2>
 <ul>
@@ -198,5 +223,5 @@
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-04-11 19:06:42
+Build Date UTC : 2017-04-11 21:22:42
 -->

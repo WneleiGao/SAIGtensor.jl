@@ -120,7 +120,7 @@
 <pre class="codehilite"><code>InitTensor(N, I, D)</code></pre>
 
 
-<p>create a tensor object</p>
+<p>create a tensor object, here is some inline math: $\sqrt[n]{1+x+x^2+\ldots}$</p>
 <p><strong>Arguments</strong></p>
 <ul>
 <li><code>N</code>: Int64, dimensions</li>
@@ -136,7 +136,7 @@
 julia&gt; X = InitTensor(N, I, D)</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/basic/basicOperations.jl#L7-L25' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/basic/basicOperations.jl#L7-L25' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.matricization' href='#SAIGtensor.matricization'>#</a>
 <strong><code>SAIGtensor.matricization</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>Xn = matricization(X::tensor, n::Int64)</code></pre>
@@ -159,7 +159,7 @@ julia&gt; n = 3
 julia&gt; Xn = matricization(X, n)</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/basic/basicOperations.jl#L34-L53' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/basic/basicOperations.jl#L34-L53' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.unmatricization' href='#SAIGtensor.unmatricization'>#</a>
 <strong><code>SAIGtensor.unmatricization</code></strong> &mdash; <em>Function</em>.</p>
 <p>X = unmatricization(Xn, n, I)</p>
@@ -179,7 +179,7 @@ julia&gt; Xn = matricization(X, n)</code></pre>
 julia&gt; n = 1; X = unmatricization(D, n, I)</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/basic/basicOperations.jl#L70-L88' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/basic/basicOperations.jl#L70-L88' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.KRP' href='#SAIGtensor.KRP'>#</a>
 <strong><code>SAIGtensor.KRP</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>r = KRP(a1, a2)</code></pre>
@@ -201,7 +201,7 @@ julia&gt; a1 = rand(m1,R); a2 = rand(m2,R);
 julia&gt; r = KRP(a1, a2)</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/basic/basicOperations.jl#L105-L123' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/basic/basicOperations.jl#L105-L123' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.recursiveKRP' href='#SAIGtensor.recursiveKRP'>#</a>
 <strong><code>SAIGtensor.recursiveKRP</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>r = recursiveKRP(A)</code></pre>
@@ -226,7 +226,7 @@ julia&gt; end
 julia&gt; r1 = recursiveKRP(A);</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/basic/basicOperations.jl#L156-L177' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/basic/basicOperations.jl#L156-L177' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.tnorm' href='#SAIGtensor.tnorm'>#</a>
 <strong><code>SAIGtensor.tnorm</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>l = tnorm(X)</code></pre>
@@ -246,7 +246,7 @@ julia&gt; r1 = recursiveKRP(A);</code></pre>
 julia&gt; l = tnorm(tensor(N, I, D))</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/basic/basicOperations.jl#L207-L223' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/basic/basicOperations.jl#L207-L223' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.ttv' href='#SAIGtensor.ttv'>#</a>
 <strong><code>SAIGtensor.ttv</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>y = ttv(X, v, dims)</code></pre>
@@ -263,7 +263,7 @@ julia&gt; l = tnorm(tensor(N, I, D))</code></pre>
 <ul>
 <li><code>y</code>: Array{Float64,1}, length is prod(remdims)</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/basic/basicOperations.jl#L228-L240' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/basic/basicOperations.jl#L228-L240' class='documenter-source'>source</a><br></p>
               
             </div>
           </div>

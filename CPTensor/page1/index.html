@@ -143,7 +143,7 @@ julia&gt; end
 julia&gt; X = initCptensor(N, I, R, lambda, A);</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L9-L34' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L9-L34' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.cpnorm' href='#SAIGtensor.cpnorm'>#</a>
 <strong><code>SAIGtensor.cpnorm</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>l = cpnorm(X)</code></pre>
@@ -168,7 +168,7 @@ julia&gt; end
 julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 
 
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L44-L65' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L44-L65' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.fitness' href='#SAIGtensor.fitness'>#</a>
 <strong><code>SAIGtensor.fitness</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>f = fitness(X, Y)</code></pre>
@@ -184,7 +184,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>f</code>: relative fitness</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L120-L131' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L120-L131' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.cptfirst' href='#SAIGtensor.cptfirst'>#</a>
 <strong><code>SAIGtensor.cptfirst</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>cptfirst(I)</code></pre>
@@ -195,7 +195,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>I</code>  : Array{Int64,1}, dimensions of tensor</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L171-L179' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L171-L179' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.cptRight' href='#SAIGtensor.cptRight'>#</a>
 <strong><code>SAIGtensor.cptRight</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>cptRight(X, A, n)</code></pre>
@@ -212,7 +212,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>Rn</code> : Array{Float64,2}</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L191-L203' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L191-L203' class='documenter-source'>source</a><br></p>
 <p>When applied matrix, using the efficient way to compute them based on the property X × A[n+1] × A[n+2] × ... × A[N] = (X × A[n+2] × ... × A[N]) × A[n+1]</p>
 <ul>
 <li><code>Rnp1</code>: Array{Float64,2} with size prod(I[1:n+1]) * R</li>
@@ -220,7 +220,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <li><code>I</code>   : Array{Int64}</li>
 <li><code>n</code>   : Int64</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L217-L223' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L217-L223' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.cptLeft' href='#SAIGtensor.cptLeft'>#</a>
 <strong><code>SAIGtensor.cptLeft</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>cptLeft(X, A, n)</code></pre>
@@ -237,7 +237,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>Ln</code> : Array{Float64,2}</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L239-L251' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L239-L251' class='documenter-source'>source</a><br></p>
 <p>efficient way to compute Ln based on the property X × A[1] ... ×A[n-1] × A[n] = (X × A[1] ... ×A[n-1]) × A[n]</p>
 <ul>
 <li><code>Lnm1</code>: Array{Float64,2} with size prod(I[1:n+1]) * R</li>
@@ -245,7 +245,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <li><code>I</code>   : Array{Int64}</li>
 <li><code>n</code>   : Int64</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L267-L273' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L267-L273' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.cp_gradient' href='#SAIGtensor.cp_gradient'>#</a>
 <strong><code>SAIGtensor.cp_gradient</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>cp_gradient(Z, A, I, n)</code></pre>
@@ -263,7 +263,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>G</code> : Array{Float64,2} with size I[n] × R</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L289-L303' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L289-L303' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.ttf' href='#SAIGtensor.ttf'>#</a>
 <strong><code>SAIGtensor.ttf</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>ttf(X, A, n)</code></pre>
@@ -280,7 +280,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>G</code> : Array{Float64,2} with size I[n] × R</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L445-L457' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L445-L457' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.ttf_slow' href='#SAIGtensor.ttf_slow'>#</a>
 <strong><code>SAIGtensor.ttf_slow</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>ttf_slow(X, A, n)</code></pre>
@@ -297,7 +297,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>G</code> : Array{Float64,2} with size I[n] × R</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L471-L484' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L471-L484' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.cpnormalize!' href='#SAIGtensor.cpnormalize!'>#</a>
 <strong><code>SAIGtensor.cpnormalize!</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>cpnormalize!(lambda, A)</code></pre>
@@ -309,14 +309,14 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <li><code>lambda</code>: Array{Float64,1}, non-sorted weight</li>
 <li><code>A</code>: Array{Array{Float64,2}}, Array of factor matrix</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L517-L525' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L517-L525' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.cp2tensor' href='#SAIGtensor.cp2tensor'>#</a>
 <strong><code>SAIGtensor.cp2tensor</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>cp2tensor(X)</code></pre>
 
 
 <p>convert 4D cptensor to tensor</p>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L549-L553' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L549-L553' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.sidx2sub' href='#SAIGtensor.sidx2sub'>#</a>
 <strong><code>SAIGtensor.sidx2sub</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>sidx2sub!(I, s)</code></pre>
@@ -332,7 +332,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <ul>
 <li><code>sidx</code>: Array{Tuple,1} with length(I)</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L1-L13' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/randCpAls.jl#L1-L13' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.randSpl!' href='#SAIGtensor.randSpl!'>#</a>
 <strong><code>SAIGtensor.randSpl!</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>randSpl!(Zs, Xs, A, T, ns, n)</code></pre>
@@ -347,15 +347,15 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <li><code>ns</code>: Int64, number of samples</li>
 <li><code>n</code>: Int64, specify which dimension</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L28-L39' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/randCpAls.jl#L28-L39' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.formXst!' href='#SAIGtensor.formXst!'>#</a>
 <strong><code>SAIGtensor.formXst!</code></strong> &mdash; <em>Function</em>.</p>
 <p>random sampling X[n]^T</p>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L58-L60' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/randCpAls.jl#L58-L60' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.formZs!' href='#SAIGtensor.formZs!'>#</a>
 <strong><code>SAIGtensor.formZs!</code></strong> &mdash; <em>Function</em>.</p>
 <p>random sampling Z[n]</p>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/randCpAls.jl#L92-L94' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/randCpAls.jl#L92-L94' class='documenter-source'>source</a><br></p>
 <p><a id='SAIGtensor.updateAn!' href='#SAIGtensor.updateAn!'>#</a>
 <strong><code>SAIGtensor.updateAn!</code></strong> &mdash; <em>Function</em>.</p>
 <pre class="codehilite"><code>updateAn!(A, AtA, Gn, n)</code></pre>
@@ -369,7 +369,7 @@ julia&gt; X = initCptensor(N, I, R, lambda, A); l = cpnorm(X);</code></pre>
 <li><code>Gn</code> : Array{Float64,2}, Xn×(⊗A[k]) for all k!=n</li>
 <li><code>n</code>  : Int64, nth factor</li>
 </ul>
-<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/320c60471f5d3c6904f64d977a176ef73906c3ce/src/cptensor/cpOperations.jl#L140-L150' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/WneleiGao/SAIGtensor.jl/tree/54021125570b563398220571ebca890fc8063d84/src/cptensor/cpOperations.jl#L140-L150' class='documenter-source'>source</a><br></p>
               
             </div>
           </div>
