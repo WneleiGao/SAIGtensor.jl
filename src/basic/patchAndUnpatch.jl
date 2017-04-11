@@ -166,7 +166,7 @@ function WrapRandCpAls(par::Tuple{String, Int64})
     R    = par[2];
     dp = getOnePatch(path)
     X = tensor(3, collect(size(dp)), convert(Array{Float64,3}, dp));
-    (lambda, A) = randCpAls_simplify(X, R);
+    (lambda, A) = cpals_simplify(X, R);
     X = cptensor(3, collect(size(dp)), R, lambda, A);
     X = cp2tensor(X)
     dp = convert(Array{Float32,1}, vec(X.D))

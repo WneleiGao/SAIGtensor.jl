@@ -19,7 +19,8 @@ export cptensor,
        formZs!,
        updateAn!,
        randCpAls,
-       randCpAls_simplify
+       CpAls_simplify,
+       randCpAls_nofit
 
 include("cpOperations.jl")
 include("randCpAls.jl")

@@ -12,16 +12,16 @@
 # X = initCptensor(N, I, R, lambda, A);
 
 # matricization and unmatricization
-using SAIGtensor
-N = 3; I = [111, 121, 321]; D = reshape(collect(1:prod(I)), I...)
-X = initTensor(N, I, D)
-tmp = 0.
-for n = 1 : N
-    Xn = matricization(X, n)
-    X1 = unmatricization(Xn, n, I)
-    tmp = tmp + vecnorm(X.D - X1.D)
-end
-@test tmp < 10e-6
+# using SAIGtensor
+# N = 3; I = [111, 121, 321]; D = reshape(collect(1:prod(I)), I...)
+# X = initTensor(N, I, D)
+# tmp = 0.
+# for n = 1 : N
+#     Xn = matricization(X, n)
+#     X1 = unmatricization(Xn, n, I)
+#     tmp = tmp + vecnorm(X.D - X1.D)
+# end
+# @test tmp < 10e-6
 
 # # test Khatri_Rao product
 # # 1D case
@@ -406,28 +406,28 @@ end
 # vecnorm(Z1-Zs)
 #
 # # =======testing random cpals===================
-N = 4; I = [61,62,63,64]; R = 20;
-ns = ceil(Int64, 10*R*log(R));
-lambda = randn(R);
-A = Array{Array{Float64,2}}(N);
-Xst = Array{Array{Float64,2}}(N);
-for m = 1 : N
-    A[m] = rand(I[m],R)
-    Xst[m] = zeros(ns,I[m])
-end
-P = cptensor(N, I, R, lambda, A);
-X = cp2tensor(P);
-@time (lambda1, A1) = randCpAls(X, R, pflag=true);
-@time (lambda2, A2) = cpals(X, R, pflag=true);
-@time (lambda3, A3) = randCpAls_simplify(X, R);
-
-normX = tnorm(X)
-normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
-fit = 1 - normresidual/normX
+# N = 4; I = [61,62,63,64]; R = 20;
+# ns = ceil(Int64, 10*R*log(R));
+# lambda = randn(R);
+# A = Array{Array{Float64,2}}(N);
+# Xst = Array{Array{Float64,2}}(N);
+# for m = 1 : N
+#     A[m] = rand(I[m],R)
+#     Xst[m] = zeros(ns,I[m])
+# end
+# P = cptensor(N, I, R, lambda, A);
+# X = cp2tensor(P);
+# @time (lambda1, A1) = randCpAls(X, R, pflag=true);
+# @time (lambda2, A2) = cpals(X, R, pflag=true);
+# @time (lambda3, A3) = randCpAls_simplify(X, R);
+#
+# normX = tnorm(X)
+# normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
+# fit = 1 - normresidual/normX
 
 
 # =========measure efficiency========================
-N = 3; I = [500,300,300]; R = 10;
+N = 3; I = [500,300,300]; R = 20;
 ns = ceil(Int64, 10*R*log(R));
 lambda = randn(R);
 A = Array{Array{Float64,2}}(N);
@@ -438,41 +438,76 @@ for m = 1 : N
 end
 P = cptensor(N, I, R, lambda, A);
 X = cp2tensor(P);
+raw = copy(X.D);
+# path= "/Users/wenyue/Desktop/tensor3D.bin";
+# fid = open(path, "w"); write(fid, vec(raw)); close(fid);
 noise = rand(I...);
-r = vecnorm(noise)/(vecnorm(X.D *0.05)
+r = vecnorm(noise)/(vecnorm(X.D) *0.1)
+noise = noise / r;
+X.D = raw + noise;
+his = randCpAls_fit(X, R); his = vcat(0.94, his);
+t   = randCpAls_time(X, R); t = cumsum(t); t = vcat(0., t)
+r = vecnorm(noise)/(vecnorm(X.D) *0.2)
+noise = noise / r;
+X.D = raw + noise;
+his1 = cpals_fit(X, R); his1 = vcat(0.93, his1);
+t1 = cpals_time(X, R); t1 = cumsum(t1); t1 = vcat(0., t1)
+
+
+path = "/Users/wenyue/Desktop/measurement/perform.bin"
+fid = open(path, "r");
+t  = read(fid, Float64, 51); t  = t[1:5:end];
+t1 = read(fid, Float64, 51); t1 = t1[1:5:end];
+t2 = read(fid, Float64, 51); t2 = t2[1:5:end];
+t3 = read(fid, Float64, 51); t3 = t3[1:5:end];
+his  = read(fid, Float64, 51); his  = his[1:5:end];
+his1 = read(fid, Float64, 51); his1 = his1[1:5:end];
+his2 = read(fid, Float64, 51); his2 = his2[1:5:end];
+his3 = read(fid, Float64, 51); his3 = his3[1:5:end];
+close(fid);
+
+fig = figure("1", figsize=(6,3))
+tmp = 12
+subplot(1,2,1);
+plot(t, his, linewidth=2, marker=">", "k", markersize=8, label="RandALS")
+plot(t1, his1, linewidth=2, marker="*", "k", markersize=8, label="ALS")
+xlabel("Time (s)", fontsize=tmp); xticks(fontsize=tmp)
+ylabel("relative error", fontsize=tmp); yticks(fontsize=tmp)
+ax=gca(); ax[:set_xticks]([0, 4, 8, 12, 16])
+ax[:set_yticks]([0., 0.2, 0.4, 0.6, 0.8])
+ax[:text](-1.6, 1.01, "a)", fontsize=tmp, fontweight="bold")
+legend(loc="upper right", fontsize=10)
+subplot(1,2,2);
+plot(t2, his2, linewidth=2, marker=">", "k", markersize=8, label="RandALS")
+plot(t3, his3, linewidth=2, marker="*", "k", markersize=8, label="ALS")
+ax=gca(); ax[:set_yticks]([]);
+ax[:set_xticks]([0, 15, 30, 45, 60])
+ax[:text](-6.0, 1.01, "b)", fontsize=tmp, fontweight="bold")
+xlabel("Time (s)", fontsize=tmp); xticks(fontsize=tmp)
+legend(loc="upper right", fontsize=10)
+tight_layout()
+savefig("/Users/wenyue/Desktop/fig2.pdf")
+
+# ===== 4D tensor ================
+N = 4; I = [200,80,80,80]; R = 20;
+ns = ceil(Int64, 10*R*log(R));
+lambda = randn(R);
+A = Array{Array{Float64,2}}(N);
+Xst = Array{Array{Float64,2}}(N);
+for m = 1 : N
+    A[m] = rand(I[m],R)
+    Xst[m] = zeros(ns,I[m])
+end
+P = cptensor(N, I, R, lambda, A);
+X = cp2tensor(P);
+path = "/Users/wenyue/Desktop/tensor4D.bin";
+fid = open(path, "r"); raw = read(fid, Float64, 200*80*80*80);
+raw = reshape(raw, 200, 80, 80, 80);
+noise = rand(I...);
+r = vecnorm(noise)/(vecnorm(X.D) *0.1)
 noise = noise / r;
 X.D = X.D + noise;
-his = randCpAls_fit(X, R)
-his = vcat(0.94, his);
-t   = randCpAls_time(X, R)
-t = cumsum(t)
-t = vcat(0., t)
-his1 = cpals_fit(X, R)
-his1 = vcat(0.93, his1);
-t1 = cpals_time(X, R)
-t1 = cumsum(t1)
-t1 = hcat(0., t1)
-fig = figure(figsize=(6,6))
-plot(t, his, linewidth=2, marker=".", "k", markersize=8)
-plot(t1, his1, linewidth=2, marker="*", "k", markersize=8)
-xlabel("Time (s)")
-ylabel("relative error")
-
-
-
-
-# ===========for 4D tensor=============
-N = 4; I = [100,60,60,60,]; R = 10;
-ns = ceil(Int64, 10*R*log(R));
-lambda = randn(R);
-A = Array{Array{Float64,2}}(N);
-Xst = Array{Array{Float64,2}}(N);
-for m = 1 : N
-    A[m] = rand(I[m],R)
-    Xst[m] = zeros(ns,I[m])
-end
-P = cptensor(N, I, R, lambda, A);
-X = cp2tensor(P);
-@time (lambda1, A1) = randCpAls(X, R, pflag=true);
-@time (lambda2, A2) = cpals(X, R, pflag=true);
-@time (lambda3, A3) = randCpAls_simplify(X, R);
+his = randCpAls_fit(X, R); his = vcat(0.94, his);
+t   = randCpAls_time(X, R); t = cumsum(t); t = vcat(0., t)
+his1 = cpals_fit(X, R); his1 = vcat(0.93, his1);
+t1 = cpals_time(X, R); t1 = cumsum(t1); t1 = vcat(0., t1)

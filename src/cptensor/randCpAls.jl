@@ -169,58 +169,7 @@ function randCpAls(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pf
     return lambda, A
 end
 
-
-function randCpAls(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pflag=false)
-    N = X.N; I = X.I;
-    # minimum(X.I) > R || error("too large rank")
-    normX = tnorm(X)
-    fit = 0.
-    # initialize factor matrix
-    lambda = zeros(R)
-    A = Array{Array{Float64,2}}(N)
-    for m = 1 : N
-        A[m] = randn(I[m], R)
-    end
-    ns = ceil(Int64, 10*R*log(R))
-    Zs = zeros(ns, R)
-    Xst = Array{Array{Float64,2}}(N)
-    for i = 1 : N
-        Xst[i] = zeros(ns, I[i])
-    end
-    println("random CP_ALS")  # alternating Least square
-    for iter = 1 : maxiter
-        fitold = fit
-        # updating ns factor
-        for n = 1 : N
-            randSpl!(Zs, Xst, A, X, ns, n)
-            updateAn!(lambda, A, Zs, Xst[n], n)
-        end
-        # check the fitness
-        normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
-        fit = 1 - normresidual/normX
-        fitchange = abs(fitold-fit)
-        if (iter > 1) && fitchange < fitchangetol
-           flag = 0
-        else
-           flag = 1
-        end
-        if pflag
-           println("iter: $iter, fit: $fit, fitchange: $fitchange")
-        end
-        if flag == 0
-           break
-        end
-    end
-    cpnormalize!(lambda, A)
-    return lambda, A
-end
-
-
-
-
-
-
-function randCpAls_simplify(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pflag=false)
+function randCpAls_nofit(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pflag=false)
     N = X.N; I = X.I;
     # minimum(X.I) > R || error("too large rank")
     normX = tnorm(X)

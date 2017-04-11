@@ -402,6 +402,46 @@ function cpals(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-6, pflag=
     return lambda, A
 end
 
+function cpals_simplify(X::tensor, R::Int64; maxiter::Int64=50)
+    N = X.N; I = X.I;
+    # initialize factor matrix
+    lambda = zeros(R)
+    A = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        A[m] = randn(I[m], R)
+    end
+    AtA = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        AtA[m] = At_mul_B(A[m], A[m])
+    end
+    # determine the updating order
+    ns = cptfirst(I)
+    for iter = 1 : maxiter
+        # updating ns factor
+        Rn = cptRight(X, A, ns)
+        Gn = cp_gradient(Rn, A, I, ns, dir="L")
+        updateAn!(lambda, A, AtA, Gn, ns)
+        # updating ns-1:-1:1 factors
+        for m = ns-1 : -1 : 1
+            Rn = cptRight(Rn, A[m+1], I, m)
+            Gn = cp_gradient(Rn, A, I, m, dir="L")
+            updateAn!(lambda, A, AtA, Gn, m)
+        end
+        # updating ns+1 factor
+        Rn = cptLeft(X, A, ns+1)
+        Gn = cp_gradient(Rn, A, I, ns+1, dir="R")
+        updateAn!(lambda, A, AtA, Gn, ns+1)
+        # updating ns+2:N factors
+        for m = ns+2: N
+            Rn = cptLeft(Rn, A[m-1], I, m)
+            Gn = cp_gradient(Rn, A, I, m, dir="R")
+            updateAn!(lambda, A, AtA, Gn, m)
+        end
+    end
+    cpnormalize!(lambda, A)
+    return lambda, A
+end
+
 """
     ttf(X, A, n)
 
@@ -541,4 +581,8 @@ function cp2tensor(X::cptensor)
        end
     end
     return tensor(N, I, T)
+end
+
+function synthesis(lambda::Vector{Float64}, A::Array{Array{Float64,2},1})
+
 end
