@@ -9,7 +9,7 @@ end
 """
     initCptensor(N, I, R, lambda, A)
 
-create a cptensor object
+create a cptensor object, right to test, it is a great work. fantastic packages.
 
 # Arguments
 * `N`: Int64, dimensions

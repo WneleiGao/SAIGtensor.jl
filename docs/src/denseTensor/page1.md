@@ -1,6 +1,6 @@
 # Dense Tensor
 
-Some operations with respect to basic dense tensor
+Some operations with respect to basic dense tensor, I need to add some latex equations to my document
 
 ## Functions
 

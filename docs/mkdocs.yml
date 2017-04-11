@@ -27,3 +27,5 @@ docs_dir: 'build'
 
 pages:
 - Introduction: index.md
+- DenseTensor: denseTensor/page1.md
+- CP Tensor: CPTensor/page1.md

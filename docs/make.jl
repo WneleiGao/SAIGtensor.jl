@@ -7,4 +7,5 @@ makedocs(
 deploydocs(
     deps   = Deps.pip("mkdocs", "python-markdown-math"),
     repo   = "github.com/WneleiGao/SAIGtensor.jl.git",
-    julia  = "release")
+    julia  = "0.5",
+    osname = "osx")
