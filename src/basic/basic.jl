@@ -6,6 +6,7 @@ export tensor,
        recursiveKRP,
        tnorm,
        ttv,
+       ttm,
        patch,
        getPatchDir,
        getOnePatch,
@@ -15,5 +16,6 @@ export tensor,
        WrapRandCpAls,
        WrapTaper
 
-include("basicOperations.jl")
+# include("basicOperations.jl")
+include("tensor.jl")
 include("patchAndUnpatch.jl")

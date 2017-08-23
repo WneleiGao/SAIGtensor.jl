@@ -164,6 +164,7 @@ end
 function WrapRandCpAls(par::Tuple{String, Int64})
     path = par[1];
     R    = par[2];
+    println("$path")
     dp = getOnePatch(path)
     X = tensor(3, collect(size(dp)), convert(Array{Float64,3}, dp));
     (lambda, A) = cpals_simplify(X, R);

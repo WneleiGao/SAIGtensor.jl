@@ -57,7 +57,6 @@ end
 pmap(WrapTaper, par);
 # unpatch
 
-
 # ======check the results===============================
 using PyPlot, Seismic, SAIGtensor
 pin = "/Users/wenyue/Desktop/randCP/data_seis/john_lake"
@@ -224,6 +223,9 @@ ax[:text](-25., -0.05, "c)", fontsize=tmp, fontweight="bold")
 (d, e) = SeisParabEvents(nx2=100, nt=500, p2=[0.4, 0.4, 0.4], amp=[1.0, -1.0, 0.7]);
 snr = 1.;
 ds = SeisAddNoise(d, snr, L=5);
+SeisPlot(ds[:,:,1], cmap="gray")
+
+
 N = 3;
 I = collect(size(ds));
 X = tensor(N, I, ds);
