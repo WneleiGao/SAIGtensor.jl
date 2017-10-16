@@ -62,12 +62,6 @@ function nvecs{Tv<:AbstractFloat, Ti<:Int64}(X::tensor{Tv}, n::Ti, rk::Ti)
     return u[:,1:rk]
 end
 
-
-
-
-
-
-
 function tuckerAls{Tv<:AbstractFloat, Ti<:Int64}(X::tensor{Tv}, rk::Union{Vector{Ti},Ti};
                    tol=1e-4, maxIter=50, init="rand")
     etp = eltype(X.D)
@@ -112,10 +106,28 @@ function tuckerAls{Tv<:AbstractFloat, Ti<:Int64}(X::tensor{Tv}, rk::Union{Vector
         if fitchange < tol
            break
         end
-        println("iter $iter, fit $fit, fitchange $fitchange")
+        # println("iter $iter, fit $fit, fitchange $fitchange")
     end
     return tucker(N, I, rk, core.D, U)
 end
+
+function WrapTuckerAls(par::Tuple{String, Vector{Int64}, Float64})
+    path = par[1]
+    println("$path")
+    rk   = par[2]
+    tol  = par[3]
+    dp   = getOnePatch(path)
+    N    = ndims(dp)
+    X    = tensor(N, collect(size(dp)), convert(Array{Float64,N}, dp))
+    T    = tuckerAls(X, rk, tol=tol)
+    dp   = tucker2Tensor(T); dp = convert(Array{Float32,1}, vec(dp.D))
+    fid  = open(path, "r+"); pos = sizeof(Int32)*9;
+    seek(fid, pos); write(fid, dp); close(fid);
+    return nothing
+end
+
+
+
 
 # construct a low tucker-rank 4D tensor
 # N = 4

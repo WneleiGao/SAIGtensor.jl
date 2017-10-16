@@ -2,6 +2,7 @@ export tucker,
        initTucker,
        tucker2Tensor,
        nvecs,
-       tuckerAls
+       tuckerAls,
+       WrapTuckerAls
 
 include("tuckerTensor.jl")
