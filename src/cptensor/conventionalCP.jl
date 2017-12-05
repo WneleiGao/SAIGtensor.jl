@@ -1,3 +1,6 @@
+"""
+Composite type for CP tensor
+"""
 type cptensor
      N :: Int64
      I :: Array{Int64,1}
@@ -80,6 +83,9 @@ function cpnorm(lambda::Array{Float64,1}, A::Array{Array{Float64,2},1})
     return sqrt(sum(coef))
 end
 
+"""
+the inner product between a CP tensor and a common tensor
+"""
 function innerprod(X::cptensor, Y::tensor)
     X.N == Y.N || throw(DimensionMismatch("X.N != Y.N"))
     N = X.N
@@ -140,7 +146,7 @@ end
 """
     updateAn!(A, AtA, Gn, n)
 
-update the nth entries in A and AtA
+update one factor matrix, the nth entries in A and AtA
 
 # Arguments
 * `A`  : Array{Array{Float64,2}}, Array of factor matrix
@@ -158,7 +164,7 @@ function updateAn!(lambda::Array{Float64,1}, A::Array{Array{Float64,2}}, AtA::Ar
     tmp = Gn / L
     for i2 = 1 : R
         # lambda[i2] = sqrt(sum(tmp[:,i2].^2))
-        lambda[i2] = maximum(abs(tmp))
+        lambda[i2] = maximum(abs.(tmp))
         for i1 = 1 : In
             tmp[i1,i2] = tmp[i1,i2] / lambda[i2]
         end
@@ -171,7 +177,8 @@ end
 """
     cptfirst(I)
 
-decide which factor should be update first, the updating order is
+fast way to compute CP decomposition by alternative least square, this function
+decide which factor matrix should be update first, the updating order is
 ns, ns-1:-1:1, ns+1, ns+2:N
 
 # Arguments
@@ -342,7 +349,11 @@ function cp_gradient(Z::Array{Float64,2}, A::Array{Array{Float64,2}}, I::Array{I
     return G
 end
 
-function cpals(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-6, pflag=false)
+"""
+fast way to implement CP decomposition by alternative least square, check the relative
+fitness at each step is expensive.
+"""
+function cpals(X::tensor, R::Int64; maxiter::Int64=30, fitchangetol=1e-3, pflag=false)
     N = X.N; I = X.I;
     # minimum(X.I) > R || error("too large rank")
     normX = tnorm(X)
@@ -383,59 +394,19 @@ function cpals(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-6, pflag=
             updateAn!(lambda, A, AtA, Gn, m)
         end
         # check the fitness
-        normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
-        fit = 1 - normresidual/normX
-        fitchange = abs(fitold-fit)
-        if (iter > 1) && fitchange < fitchangetol
-           flag = 0
-        else
-           flag = 1
-        end
         if pflag
+           normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
+           fit = 1 - normresidual/normX
+           fitchange = abs(fitold-fit)
+           if (iter > 1) && fitchange < fitchangetol
+              flag = 0
+           else
+              flag = 1
+           end
            println("iter: $iter, fit: $fit, fitchange: $fitchange")
-        end
-        if flag == 0
-           break
-        end
-    end
-    cpnormalize!(lambda, A)
-    return lambda, A
-end
-
-function cpals_simplify(X::tensor, R::Int64; maxiter::Int64=50)
-    N = X.N; I = X.I;
-    # initialize factor matrix
-    lambda = zeros(R)
-    A = Array{Array{Float64,2}}(N)
-    for m = 1 : N
-        A[m] = randn(I[m], R)
-    end
-    AtA = Array{Array{Float64,2}}(N)
-    for m = 1 : N
-        AtA[m] = At_mul_B(A[m], A[m])
-    end
-    # determine the updating order
-    ns = cptfirst(I)
-    for iter = 1 : maxiter
-        # updating ns factor
-        Rn = cptRight(X, A, ns)
-        Gn = cp_gradient(Rn, A, I, ns, dir="L")
-        updateAn!(lambda, A, AtA, Gn, ns)
-        # updating ns-1:-1:1 factors
-        for m = ns-1 : -1 : 1
-            Rn = cptRight(Rn, A[m+1], I, m)
-            Gn = cp_gradient(Rn, A, I, m, dir="L")
-            updateAn!(lambda, A, AtA, Gn, m)
-        end
-        # updating ns+1 factor
-        Rn = cptLeft(X, A, ns+1)
-        Gn = cp_gradient(Rn, A, I, ns+1, dir="R")
-        updateAn!(lambda, A, AtA, Gn, ns+1)
-        # updating ns+2:N factors
-        for m = ns+2: N
-            Rn = cptLeft(Rn, A[m-1], I, m)
-            Gn = cp_gradient(Rn, A, I, m, dir="R")
-            updateAn!(lambda, A, AtA, Gn, m)
+           if flag == 0
+              break
+           end
         end
     end
     cpnormalize!(lambda, A)
@@ -549,7 +520,7 @@ end
 """
     cp2tensor(X)
 
-convert 4D cptensor to tensor
+convert 4D or 3D cptensor to tensor
 """
 function cp2tensor(X::cptensor)
     N = X.N
@@ -583,6 +554,102 @@ function cp2tensor(X::cptensor)
     return tensor(N, I, T)
 end
 
-function synthesis(lambda::Vector{Float64}, A::Array{Array{Float64,2},1})
+"""
+   output the relative convergence curve for conventional CP decomposition
+"""
+function cpals_fit(X::tensor, R::Int64; maxiter::Int64=50)
+    N = X.N; I = X.I;
+    # minimum(X.I) > R || error("too large rank")
+    normX = tnorm(X)
+    fit = 0.
+    # initialize factor matrix
+    lambda = zeros(R)
+    A = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        A[m] = randn(I[m], R)
+    end
+    AtA = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        AtA[m] = At_mul_B(A[m], A[m])
+    end
+    # determine the updating order
+    ns = cptfirst(I)
+    his = zeros(maxiter)
+    for iter = 1 : maxiter
+        fitold = fit
+        # updating ns factor
+        Rn = cptRight(X, A, ns)
+        Gn = cp_gradient(Rn, A, I, ns, dir="L")
+        updateAn!(lambda, A, AtA, Gn, ns)
+        # updating ns-1:-1:1 factors
+        for m = ns-1 : -1 : 1
+            Rn = cptRight(Rn, A[m+1], I, m)
+            Gn = cp_gradient(Rn, A, I, m, dir="L")
+            updateAn!(lambda, A, AtA, Gn, m)
+        end
+        # updating ns+1 factor
+        Rn = cptLeft(X, A, ns+1)
+        Gn = cp_gradient(Rn, A, I, ns+1, dir="R")
+        updateAn!(lambda, A, AtA, Gn, ns+1)
+        # updating ns+2:N factors
+        for m = ns+2: N
+            Rn = cptLeft(Rn, A[m-1], I, m)
+            Gn = cp_gradient(Rn, A, I, m, dir="R")
+            updateAn!(lambda, A, AtA, Gn, m)
+        end
+        # check the fitness
+        normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
+        fit = 1 - normresidual/normX
+        his[iter] = 1.- fit
+        println("$iter, $fit")
+    end
+    return his
+end
 
+"""
+   measure the computation time for conventional CP decomposition
+"""
+function cpals_time(X::tensor, R::Int64; maxiter::Int64=50)
+    N = X.N; I = X.I;
+    # minimum(X.I) > R || error("too large rank")
+    normX = tnorm(X)
+    fit = 0.
+    # initialize factor matrix
+    lambda = zeros(R)
+    A = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        A[m] = randn(I[m], R)
+    end
+    AtA = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        AtA[m] = At_mul_B(A[m], A[m])
+    end
+    # determine the updating order
+    ns = cptfirst(I)
+    his = zeros(maxiter)
+    for iter = 1 : maxiter
+        tic()
+        # updating ns factor
+        Rn = cptRight(X, A, ns)
+        Gn = cp_gradient(Rn, A, I, ns, dir="L")
+        updateAn!(lambda, A, AtA, Gn, ns)
+        # updating ns-1:-1:1 factors
+        for m = ns-1 : -1 : 1
+            Rn = cptRight(Rn, A[m+1], I, m)
+            Gn = cp_gradient(Rn, A, I, m, dir="L")
+            updateAn!(lambda, A, AtA, Gn, m)
+        end
+        # updating ns+1 factor
+        Rn = cptLeft(X, A, ns+1)
+        Gn = cp_gradient(Rn, A, I, ns+1, dir="R")
+        updateAn!(lambda, A, AtA, Gn, ns+1)
+        # updating ns+2:N factors
+        for m = ns+2: N
+            Rn = cptLeft(Rn, A[m-1], I, m)
+            Gn = cp_gradient(Rn, A, I, m, dir="R")
+            updateAn!(lambda, A, AtA, Gn, m)
+        end
+        his[iter] = toq()
+    end
+    return his
 end

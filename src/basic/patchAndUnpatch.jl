@@ -2,7 +2,6 @@
 d is a 3D array, it_wl is the window length along time axis, it_wo is the
 overlapping of window.
 """
-
 function patch{Ti<:AbstractFloat, Tn}(path::String, d::Array{Ti,3},
                                       it_wl::Tn, it_wo::Tn,
                                       x1_wl::Tn, x1_wo::Tn,
@@ -14,34 +13,24 @@ function patch{Ti<:AbstractFloat, Tn}(path::String, d::Array{Ti,3},
     it_wl = it_wl > nt ? nt : it_wl
     x1_wl = x1_wl > n1 ? n1 : x1_wl
     x2_wl = x2_wl > n2 ? n2 : x2_wl
-    it_nw = floor(Int64, nt/it_ws)
-    x1_nw = floor(Int64, n1/x1_ws)
-    x2_nw = floor(Int64, n2/x2_ws)
-    # be carefull with the boundary
-    if it_nw*it_ws + it_wo < nt
-       it_nw = it_nw + 1
-    end
-    if x1_nw*x1_ws + x1_wo < n1
-       x1_nw = x1_nw + 1
-    end
-    if x2_nw*x2_ws + x2_wo < n2
-       x2_nw = x2_nw + 1
-    end
+    it_nw = floor(Int64,(nt-it_wl)/it_ws)+1; it_nw = (it_nw-1)*it_ws+it_wl < nt ? it_nw+1 : it_nw
+    x1_nw = floor(Int64,(n1-x1_wl)/x1_ws)+1; x1_nw = (x1_nw-1)*x1_ws+x1_wl < n1 ? x1_nw+1 : x1_nw
+    x2_nw = floor(Int64,(n2-x2_wl)/x2_ws)+1; x2_nw = (x2_nw-1)*x2_ws+x2_wl < n2 ? x2_nw+1 : x2_nw
     for i2 = 1 : x2_nw
         i2l = (i2-1)*x2_ws + 1
-        i2u = i2l + x2_wl - 1
+        i2u =  i2l  +x2_wl - 1
         if i2u > n2
            i2u = n2
         end
         for i1 = 1 : x1_nw
             i1l = (i1-1)*x1_ws + 1
-            i1u = i1l + x1_wl - 1
+            i1u = i1l  + x1_wl - 1
             if i1u > n1
                i1u = n1
             end
             for it = 1 : it_nw
                 itl = (it-1)*it_ws + 1
-                itu = itl + it_wl - 1
+                itu = itl   +it_wl - 1
                 if itu > nt
                    itu = nt
                 end
@@ -59,6 +48,9 @@ function patch{Ti<:AbstractFloat, Tn}(path::String, d::Array{Ti,3},
     return dir
 end
 
+"""
+get the directory of one patch
+"""
 function getPatchDir(pin::String, it_nw::Int64, x1_nw::Int64, x2_nw::Int64)
     dir = Array{String}(it_nw*x1_nw*x2_nw)
     for i2 = 1 : x2_nw
@@ -72,6 +64,9 @@ function getPatchDir(pin::String, it_nw::Int64, x1_nw::Int64, x2_nw::Int64)
     return dir
 end
 
+"""
+read one patch of 3D data
+"""
 function getOnePatch(pin::String; rflag=false)
     fid = open(pin, "r")
     nt  = read(fid, Int32); n1  = read(fid, Int32); n2 = read(fid, Int32);
@@ -85,6 +80,18 @@ function getOnePatch(pin::String; rflag=false)
     else
        return d
     end
+end
+
+"""
+tapering the overlapping boundary of each patch
+"""
+function WrapTaper(par::Tuple{String, Int64, Int64, Int64})
+    dir = par[1]
+    it_wo = par[2]
+    x1_wo = par[3]
+    x2_wo = par[4]
+    Taper(dir, it_wo, x1_wo, x2_wo)
+    return nothing
 end
 
 function Taper{Ti<:Integer}(pin::Array{String,1}, it_wo::Ti, x1_wo::Ti, x2_wo::Ti)
@@ -159,28 +166,4 @@ function UnPatch(pin::Array{String,1})
         d[itl:itu, x1l:x1u, x2l:x2u] = d[itl:itu, x1l:x1u, x2l:x2u] + d1[:,:,:]
     end
     return d
-end
-
-function WrapRandCpAls(par::Tuple{String, Int64})
-    path = par[1];
-    R    = par[2];
-    println("$path")
-    dp = getOnePatch(path)
-    X = tensor(3, collect(size(dp)), convert(Array{Float64,3}, dp));
-    (lambda, A) = cpals_simplify(X, R);
-    X = cptensor(3, collect(size(dp)), R, lambda, A);
-    X = cp2tensor(X)
-    dp = convert(Array{Float32,1}, vec(X.D))
-    fid = open(path, "r+"); pos = sizeof(Int32)*9;
-    seek(fid, pos); write(fid, dp); close(fid)
-    return nothing
-end
-
-function WrapTaper(par::Tuple{String, Int64, Int64, Int64})
-    dir = par[1]
-    it_wo = par[2]
-    x1_wo = par[3]
-    x2_wo = par[4]
-    Taper(dir, it_wo, x1_wo, x2_wo)
-    return nothing
 end

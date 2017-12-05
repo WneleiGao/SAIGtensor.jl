@@ -1,3 +1,6 @@
+"""
+composite type for tucker tensor
+"""
 type tucker{Tv<:AbstractFloat}
      N  :: Int64
      rk :: Vector{Int64}
@@ -6,6 +9,9 @@ type tucker{Tv<:AbstractFloat}
      U  :: Vector{Matrix{Tv}}
 end
 
+"""
+  initialize a tucker tensor
+"""
 function initTucker(T::tucker)
     T1 = Tucker(T.N, copy(T.rk), copy(T.I), copy(T.core), deepcopy(U))
     return T1
@@ -55,15 +61,21 @@ function tucker2Tensor(T::tucker)
     return C
 end
 
-function nvecs{Tv<:AbstractFloat, Ti<:Int64}(X::tensor{Tv}, n::Ti, rk::Ti)
+"""
+nth mode factor matrix
+"""
+function nvecs(X::tensor, n::Ti, rk::Ti) where {Ti<:Int64}
     Xn = matricization(X, n)
     Y  = Xn * Xn'
     (u, s, v) = svd(Y)
     return u[:,1:rk]
 end
 
-function tuckerAls{Tv<:AbstractFloat, Ti<:Int64}(X::tensor{Tv}, rk::Union{Vector{Ti},Ti};
-                   tol=1e-4, maxIter=50, init="rand")
+"""
+tucker decomposition by alternative minimization
+"""
+function tuckerAls(X::tensor, rk::Union{Vector{Ti},Ti};
+                   tol=1e-4, maxIter=50, init="rand") where {Ti<:Int64}
     etp = eltype(X.D)
     N = X.N
     I = X.I
@@ -111,6 +123,22 @@ function tuckerAls{Tv<:AbstractFloat, Ti<:Int64}(X::tensor{Tv}, rk::Union{Vector
     return tucker(N, I, rk, core.D, U)
 end
 
+"""
+   Wrap tucker decomposition, the input is multi-dimensional array
+"""
+function WrapTuckerAls(dp::Array{Tv}, rk::Int64) where Tv <: AbstractFloat
+    N    = ndims(dp)
+
+    X    = tensor(N, collect(size(dp)), convert(Array{Float64,N}, dp))
+    T    = tuckerAls(X, rk, tol=tol)
+    dp   = tucker2Tensor(T); dp = convert(Array{Float32,1}, vec(dp.D))
+    return dp
+    return nothing
+end
+
+"""
+   Wrap tucker decomposition, the input is a tuple
+"""
 function WrapTuckerAls(par::Tuple{String, Vector{Int64}, Float64})
     path = par[1]
     println("$path")
@@ -125,30 +153,3 @@ function WrapTuckerAls(par::Tuple{String, Vector{Int64}, Float64})
     seek(fid, pos); write(fid, dp); close(fid);
     return nothing
 end
-
-
-
-
-# construct a low tucker-rank 4D tensor
-# N = 4
-# rk = [11, 13, 15, 8];
-# I  = [42, 22, 39, 88];
-# core1 = randn(rk...)
-# U1  = Vector{Matrix{Float64}}(N)
-# for i = 1 : N
-#     U1[i] = randn(I[i], rk[i])
-# end
-# T = tucker(N, I, rk, core1, U1)
-# X = tucker2Tensor(T)
-# dobs = SeisAddNoise(X.D, 2.0)
-# Xn = initTensor(dobs)
-#
-# T1 = tuckerAls(Xn, rk);
-# X1 = tucker2Tensor(T1);
-#
-# d = X.D; dr = X1.D
-#
-# SeisPlot(d[1,1,:,:], pclip=100)
-# SeisPlot(dr[1,1,:,:], pclip=100)
-# SeisPlot(dobs[1,1,:,:], pclip=100)
-# vecnorm(d[1,1,:,:]-dr[1,1,:,:])

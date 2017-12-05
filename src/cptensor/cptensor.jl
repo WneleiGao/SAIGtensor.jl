@@ -9,6 +9,8 @@ export cptensor,
        cptLeft,
        cp_gradient,
        cpals,
+       cpals_fit,
+       cpals_time,
        ttf,
        ttf_slow,
        cpnormalize!,
@@ -19,8 +21,10 @@ export cptensor,
        formZs!,
        updateAn!,
        randCpAls,
-       CpAls_simplify,
-       randCpAls_nofit
+       WrapCpAls,
+       WrapRandCpAls,
+       randCpAls_fit,
+       randCpAls_time
 
-include("cpOperations.jl")
+include("conventionalCP.jl")
 include("randCpAls.jl")

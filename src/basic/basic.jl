@@ -10,12 +10,13 @@ export tensor,
        patch,
        getPatchDir,
        getOnePatch,
+       WrapTaper,
        Taper,
        UnPatch,
        PatchProcess,
-       WrapRandCpAls,
-       WrapTaper
+       SeisMixEvents3D
 
 # include("basicOperations.jl")
 include("tensor.jl")
 include("patchAndUnpatch.jl")
+include("SeisMixEvents.jl")

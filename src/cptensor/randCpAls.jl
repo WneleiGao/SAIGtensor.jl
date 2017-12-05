@@ -42,7 +42,7 @@ function randSpl!(Zs::Array{Float64,2}, Xst::Array{Array{Float64,2},1}, A::Array
     length(A) == N || throw(DimensionMismatch())
     (l1, l2) = size(Zs)
     (l1, l2) == (ns, size(A[1],2)) || throw(DimensionMismatch())
-    dim = setdiff(collect(1:N), [n])
+    dim = setdiff(collect(1:N), n)
     # generate random multi-linear index
     idx = Array{Array{Int64,1}}(N-1)
     for i = 1 : N-1
@@ -56,7 +56,7 @@ function randSpl!(Zs::Array{Float64,2}, Xst::Array{Array{Float64,2},1}, A::Array
 end
 
 """
-   random sampling X[n]^T
+   random sampling X[n]^T for 4D tensor
 """
 function formXst!(Xst::Array{Float64,2}, D::Array{Float64,4}, idx::Array{Array{Int64,1},1}, dim::Array{Int64,1}, n::Int64)
     (l1,l2) = size(Xst)
@@ -73,6 +73,10 @@ function formXst!(Xst::Array{Float64,2}, D::Array{Float64,4}, idx::Array{Array{I
     end
     return nothing
 end
+
+"""
+   random sampling X[n]^T for 3D tensor
+"""
 function formXst!(Xst::Array{Float64,2}, D::Array{Float64,3}, idx::Array{Array{Int64,1},1}, dim::Array{Int64,1}, n::Int64)
     (l1,l2) = size(Xst)
     N = ndims(D)
@@ -90,7 +94,7 @@ function formXst!(Xst::Array{Float64,2}, D::Array{Float64,3}, idx::Array{Array{I
 end
 
 """
-  random sampling Z[n]
+   random sampling Z[n]
 """
 function formZs!(Zs::Array{Float64,2}, A::Array{Array{Float64,2},1}, idx::Array{Array{Int64,1},1}, dim::Array{Int64,1})
     (l1,l2) = size(Zs)
@@ -110,12 +114,15 @@ function formZs!(Zs::Array{Float64,2}, A::Array{Array{Float64,2},1}, idx::Array{
     return nothing
 end
 
+"""
+  Update one factor matrix for CP decomposition
+"""
 function updateAn!(lambda::Array{Float64,1}, A::Array{Array{Float64,2},1}, Zs::Array{Float64,2}, Xst::Array{Float64,2}, n::Int64)
     R = size(A[1],2)
     In = size(A[n],1)
     tmp = (Zs \ Xst)'
     for i2 = 1 : R
-        lambda[i2] = maximum(abs(tmp))
+        lambda[i2] = maximum(abs.(tmp))
         for i1 = 1 : In
             tmp[i1,i2] = tmp[i1,i2] / lambda[i2]
         end
@@ -124,7 +131,10 @@ function updateAn!(lambda::Array{Float64,1}, A::Array{Array{Float64,2},1}, Zs::A
     return nothing
 end
 
-function randCpAls(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pflag=false)
+"""
+   Randomized CP decomposition
+"""
+function randCpAls(X::tensor, R::Int64; maxiter::Int64=30, fitchangetol=1e-3, pflag=false)
     N = X.N; I = X.I;
     # minimum(X.I) > R || error("too large rank")
     normX = tnorm(X)
@@ -141,7 +151,91 @@ function randCpAls(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pf
     for i = 1 : N
         Xst[i] = zeros(ns, I[i])
     end
-    println("random CP_ALS")  # alternating Least square
+    for iter = 1 : maxiter
+        fitold = fit
+        # updating ns factor
+        for n = 1 : N
+            randSpl!(Zs, Xst, A, X, ns, n)
+            updateAn!(lambda, A, Zs, Xst[n], n)
+        end
+        # check the fitness
+        if pflag
+           normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
+           fit = 1 - normresidual/normX
+           fitchange = abs(fitold-fit)
+           if (iter > 1) && fitchange < fitchangetol
+              flag = 0
+           else
+              flag = 1
+           end
+           if pflag
+              println("iter: $iter, fit: $fit, fitchange: $fitchange")
+           end
+           if flag == 0
+              break
+           end
+        end
+    end
+    cpnormalize!(lambda, A)
+    return lambda, A
+end
+
+"""
+wrap CP decomposition by alternative minimization
+"""
+function WrapCpAls(par::Tuple{String, Int64})
+    path = par[1];
+    R    = par[2];
+    println("$path")
+    dp = getOnePatch(path); N = ndims(dp);
+    X = tensor(N, collect(size(dp)), convert(Array{Float64,3}, dp));
+    (lambda, A) = cpals_simplify(X, R);
+    X = cptensor(N, collect(size(dp)), R, lambda, A);
+    X = cp2tensor(X)
+    dp = convert(Array{Float32,1}, vec(X.D))
+    fid = open(path, "r+"); pos = sizeof(Int32)*9;
+    seek(fid, pos); write(fid, dp); close(fid)
+    return nothing
+end
+
+"""
+wrap randomized CP decomposition by alternative minimization
+"""
+function WrapRandCpAls(par::Tuple{String, Int64})
+    path = par[1];
+    R    = par[2];
+    println("$path")
+    dp = getOnePatch(path); N = ndims(dp);
+    X = tensor(N, collect(size(dp)), convert(Array{Float64,3}, dp));
+    (lambda, A) = randCpAls(X, R);
+    X = cptensor(N, collect(size(dp)), R, lambda, A);
+    X = cp2tensor(X)
+    dp = convert(Array{Float32,1}, vec(X.D))
+    fid = open(path, "r+"); pos = sizeof(Int32)*9;
+    seek(fid, pos); write(fid, dp); close(fid)
+    return nothing
+end
+# ==============================================================================
+#                  supporting functions for testing performance
+# ==============================================================================
+function randCpAls_fit(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5)
+    N = X.N; I = X.I;
+    # minimum(X.I) > R || error("too large rank")
+    normX = tnorm(X)
+    fit = 0.
+    # initialize factor matrix
+    lambda = zeros(R)
+    A = Array{Array{Float64,2}}(N)
+    for m = 1 : N
+        A[m] = randn(I[m], R)
+    end
+    ns = ceil(Int64, 10*R*log(R))
+    Zs = zeros(ns, R)
+    Xst = Array{Array{Float64,2}}(N)
+    for i = 1 : N
+        Xst[i] = zeros(ns, I[i])
+    end
+    his = zeros(maxiter)
     for iter = 1 : maxiter
         fitold = fit
         # updating ns factor
@@ -151,25 +245,18 @@ function randCpAls(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pf
         end
         # check the fitness
         normresidual = sqrt(normX^2 + cpnorm(lambda,A)^2 - 2*innerprod(lambda, A, X))
-        fit = 1 - normresidual/normX
-        fitchange = abs(fitold-fit)
-        if (iter > 1) && fitchange < fitchangetol
-           flag = 0
-        else
-           flag = 1
-        end
-        if pflag
-           println("iter: $iter, fit: $fit, fitchange: $fitchange")
-        end
-        if flag == 0
-           break
-        end
+        fit = 1. - normresidual/normX
+        his[iter] = 1. - fit
+        println("$iter, $fit")
     end
     cpnormalize!(lambda, A)
-    return lambda, A
+    return his
 end
 
-function randCpAls_nofit(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5, pflag=false)
+"""
+   measure the computation time for randomized CP decomposition
+"""
+function randCpAls_time(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e-5)
     N = X.N; I = X.I;
     # minimum(X.I) > R || error("too large rank")
     normX = tnorm(X)
@@ -186,14 +273,14 @@ function randCpAls_nofit(X::tensor, R::Int64; maxiter::Int64=50, fitchangetol=1e
     for i = 1 : N
         Xst[i] = zeros(ns, I[i])
     end
+    his = zeros(maxiter)
     for iter = 1 : maxiter
-        fitold = fit
-        # updating ns factor
+        tic()
         for n = 1 : N
             randSpl!(Zs, Xst, A, X, ns, n)
             updateAn!(lambda, A, Zs, Xst[n], n)
         end
+        his[iter] = toq()
     end
-    cpnormalize!(lambda, A)
-    return lambda, A
+    return his
 end

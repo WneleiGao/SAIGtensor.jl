@@ -1,11 +1,11 @@
-type tensor{Tv<:AbstractFloat}
+type tensor
      N :: Int64
      I :: Array{Int64,1}
-     D :: Array{Tv}
+     D :: Array{Float64}
 end
 
 """
-    InitTensor(N, I, D)
+    initTensor(N, I, D)
 
 create a tensor object, here is some inline math: \$\\sqrt[n]{1+x+x^2+\\ldots}\$
 
@@ -20,10 +20,18 @@ create a tensor object, here is some inline math: \$\\sqrt[n]{1+x+x^2+\\ldots}\$
 # Example
 ```julia
 julia> N = 5; I = [23, 42, 13, 14, 17]; D = rand(I...)
-julia> X = InitTensor(N, I, D)
+julia> X = initTensor(N, I, D)
 ```
 """
-function initTensor{Tv<:AbstractFloat}(D::Array{Tv})
+function initTensor(N::Int64, I::Vector{Int64}, D::Array{Float64})
+    N==length(I) || throw(DimensionMismatch("length(I) != N"))
+    for m = 1 : N
+        I[m]==size(D,m) || throw(DimensionMismatch("I[m] != size(D,m)"))
+    end
+    return tensor(N, I, D)
+end
+
+function initTensor(D::Array{Tv}) where Tv <: Float64
     I = collect(size(D))
     N = ndims(D)
     return tensor(N, I, D)
@@ -66,6 +74,24 @@ function matricization(X::tensor, n::Int64)
 end
 
 """
+the input is multi-dimensional matrix
+"""
+function matricization(X::Array{Tv}, I::Vector{Int64}, n::Int64) where Tv<:Number
+    N = length(I)
+    if n == 1 # first dimension
+       Xn = copy(reshape(X, I[1], prod(I[2:N])))
+    elseif n == N
+       Xn = reshape(X, prod(I[1:N-1]), I[N])
+       Xn = transpose(Xn) # last dimension, if the matrix is complex, do not use {\prime}
+    else
+       p = collect(1:N); p[n] = 1; p[1] = n;  # permute first and nth dimension
+       Xn = permutedims(X, p)
+       Xn = reshape(Xn, I[n], round(Int64, prod(I)/I[n]))
+    end
+    return Xn
+end
+
+"""
   X = unmatricization(Xn, n, I)
 
 folding an Array back to tensor
@@ -84,7 +110,11 @@ julia> N = 3; I = [3, 4, 2]; D = reshape(collect(1:prod(I)), I[1], prod(I[2:N]))
 julia> n = 1; X = unmatricization(D, n, I)
 ```
 """
-function unmatricization{Tv<:AbstractFloat}(D::Matrix{Tv}, n::Int64, I::Array{Int64,1})
+function unmatricization(D::Union{Matrix{Float64}, Vector{Float64}}, n::Int64, I::Array{Int64,1})
+    # incase D is a vector
+    if typeof(D) == Vector{Float64}
+       D = reshape(D, length(D), 1)
+    end
     if n == 1
        D = reshape(D, I...)
     elseif n == length(I)
@@ -93,11 +123,26 @@ function unmatricization{Tv<:AbstractFloat}(D::Matrix{Tv}, n::Int64, I::Array{In
     else
        I1 = copy(I); I1[1] = I[n]; I1[n] = I[1];
        D = reshape(D, I1...)
-       p  = collect(1:length(I)); p[n] = 1; p[1] = n;
-       D  = permutedims(D, p)
+       p = collect(1:length(I)); p[n] = 1; p[1] = n;
+       D = permutedims(D, p)
     end
     X = initTensor(D)
     return X
+end
+
+function unmatricization(Dn::Matrix{Tv}, I::Vector{Int64}, n::Int64) where Tv<:Number
+    if n == 1
+       D = copy(reshape(Dn, I...))
+    elseif n == length(I)
+       D = transpose(Dn)
+       D = reshape(D, I...)
+    else
+       I1 = copy(I); I1[1] = I[n]; I1[n] = I[1];
+       D  = reshape(Dn, I1...)
+       p  = collect(1:length(I)); p[n] = 1; p[1] = n;
+       D  = permutedims(D, p)
+    end
+    return D
 end
 
 """
@@ -257,6 +302,9 @@ function ttv{Tv<:AbstractFloat}(X::tensor, v::Vector{Vector{Tv}}, dims::Array{In
     return des
 end
 
+"""
+tensor times one matrix
+"""
 function ttm{Tv<:AbstractFloat}(X::tensor, U::Matrix{Tv}, n::Int64; tflag=false)
     Xn = matricization(X, n)
     I = copy(X.I);
@@ -272,7 +320,7 @@ function ttm{Tv<:AbstractFloat}(X::tensor, U::Matrix{Tv}, n::Int64; tflag=false)
 end
 
 """
-   make sure all U contains all the factor matrix and put them in the right order
+   tensor times a vector of matrix
 """
 function ttm{Tv<:AbstractFloat, Ti<:Int64}(X::tensor, U::Vector{Matrix{Tv}}, n::Union{Vector{Ti},Ti}; tflag=false)
     N = X.N
