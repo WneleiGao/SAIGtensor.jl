@@ -16,6 +16,8 @@ raw = copy(X.D);
 root= homedir(); path= join([root "/Desktop/tensor3D.bin"]);
 fid = open(path, "w"); write(fid, vec(raw)); close(fid);
 
+root= homedir(); path= join([root "/Desktop/tensor3D.bin"]);
+fid = open(path, "r"); d = read(fid, Float64, ); close(fid);
 # add some random noise to pure data
 noise = rand(I...); r = vecnorm(noise)/(vecnorm(X.D) *0.1)
 noise = noise / r ; X.D = raw + noise;
@@ -49,23 +51,23 @@ t3 = cpals_time(X, R) ; t3 = cumsum(t3); t3 = vcat(0., t3)
 
 # plotting computation time VS relative fitness
 fig = figure("1", figsize=(6,3))
-tmp = 12
+tmp = 9
 subplot(1,2,1);
-plot(t[1:5:end], his[1:5:end], linewidth=2, marker=">", "k", markersize=8, label="RandALS")
-plot(t1[1:5:end], his1[1:5:end], linewidth=2, marker="*", "k", markersize=8, label="ALS")
+plot(t[1:5:end], his[1:5:end], linewidth=2, marker=">", "k", markersize=5, label="RandALS")
+plot(t1[1:5:end], his1[1:5:end], linewidth=2, marker="*", "k", markersize=5, label="ALS")
 xlabel("Time (s)", fontsize=tmp); xticks(fontsize=tmp)
 ylabel("relative error", fontsize=tmp); yticks(fontsize=tmp)
 ax=gca(); ax[:set_xticks]([0, 4, 8, 12, 16])
 ax[:set_yticks]([0., 0.2, 0.4, 0.6, 0.8])
 ax[:text](-1.6, 1.01, "a)", fontsize=tmp, fontweight="bold")
-legend(loc="upper right", fontsize=10)
+legend(loc="upper right", fontsize=9)
 
 subplot(1,2,2);
-plot(t2[1:5:end], his2[1:5:end], linewidth=2, marker=">", "k", markersize=8, label="RandALS")
-plot(t3[1:5:end], his3[1:5:end], linewidth=2, marker="*", "k", markersize=8, label="ALS")
+plot(t2[1:5:end], his2[1:5:end], linewidth=2, marker=">", "k", markersize=5, label="RandALS")
+plot(t3[1:5:end], his3[1:5:end], linewidth=2, marker="*", "k", markersize=5, label="ALS")
 ax=gca(); ax[:set_yticks]([]);
 ax[:set_xticks]([0, 15, 30, 45, 60])
 ax[:text](-6.0, 1.01, "b)", fontsize=tmp, fontweight="bold")
 xlabel("Time (s)", fontsize=tmp); xticks(fontsize=tmp)
-legend(loc="upper right", fontsize=10)
+legend(loc="upper right", fontsize=9)
 tight_layout()
